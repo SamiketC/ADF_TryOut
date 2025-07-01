@@ -1,0 +1,26 @@
+{
+	"name": "pipeline_copy_file_to_destination",
+	"properties": {
+		"description": "pipeline_copy_file_to_destination",
+		"activities": [
+			{
+				"name": "copy_file_to_destination",
+				"description": "copy_file_to_destination",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"enableStaging": false
+				}
+			}
+		],
+		"annotations": []
+	}
+}
