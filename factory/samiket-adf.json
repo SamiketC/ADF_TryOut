@@ -1,0 +1,9 @@
+{
+	"name": "samiket-adf",
+	"location": "germanywestcentral",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "b39f4aca-1c7e-4176-9f79-680ef1361f8d",
+		"tenantId": "53721fdb-77af-43cc-9303-cf03b3c7b553"
+	}
+}
