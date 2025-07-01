@@ -1,0 +1,77 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "samiket-adf"
+		},
+		"GitHub_Source_credential": {
+			"type": "secureString",
+			"metadata": "Secure string for 'credential' of 'GitHub_Source'"
+		},
+		"LS_AzureDataLakeStorage_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'LS_AzureDataLakeStorage'"
+		},
+		"GitHub_Source_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "samiketchakraborty@gmail.com"
+		},
+		"LS_Github_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://raw.githubusercontent.com/"
+		},
+		"LS_AzureDataLakeStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://samiketstorageaccount.dfs.core.windows.net/"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "samiket-adf_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"GitHub_Source_credential": {
+						"value": "[parameters('GitHub_Source_credential')]"
+					},
+					"LS_AzureDataLakeStorage_accountKey": {
+						"value": "[parameters('LS_AzureDataLakeStorage_accountKey')]"
+					},
+					"GitHub_Source_properties_typeProperties_username": {
+						"value": "[parameters('GitHub_Source_properties_typeProperties_username')]"
+					},
+					"LS_Github_properties_typeProperties_url": {
+						"value": "[parameters('LS_Github_properties_typeProperties_url')]"
+					},
+					"LS_AzureDataLakeStorage_properties_typeProperties_url": {
+						"value": "[parameters('LS_AzureDataLakeStorage_properties_typeProperties_url')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
