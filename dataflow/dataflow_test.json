@@ -19,6 +19,9 @@
 				},
 				{
 					"name": "aggregateOnIsActive"
+				},
+				{
+					"name": "SelectAllColumns"
 				}
 			],
 			"scriptLines": [
@@ -32,7 +35,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> SourceCSVFile",
-				"SourceCSVFile select(mapColumn(",
+				"SelectAllColumns select(mapColumn(",
 				"          EmpId,",
 				"          Name,",
 				"          Designation,",
@@ -42,7 +45,16 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectList",
 				"SelectList aggregate(groupBy(IsActive),",
-				"     CountRecords = count(EmpId)) ~> aggregateOnIsActive"
+				"     CountRecords = count(EmpId)) ~> aggregateOnIsActive",
+				"SourceCSVFile select(mapColumn(",
+				"          EmpId,",
+				"          Name,",
+				"          Designation,",
+				"          Salary,",
+				"          IsActive",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectAllColumns"
 			]
 		}
 	}
