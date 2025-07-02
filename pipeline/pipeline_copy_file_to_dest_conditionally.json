@@ -78,7 +78,9 @@
 						"referenceName": "Azure_CSV_File",
 						"type": "DatasetReference"
 					},
-					"fieldList": [],
+					"fieldList": [
+						"childItems"
+					],
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
 						"enablePartitionDiscovery": false
