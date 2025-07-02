@@ -11,9 +11,9 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'credential' of 'GitHub_Source'"
 		},
-		"LS_AzureDataLakeStorage_accountKey": {
+		"LS_AzureDLS_accountKey": {
 			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'LS_AzureDataLakeStorage'"
+			"metadata": "Secure string for 'accountKey' of 'LS_AzureDLS'"
 		},
 		"GitHub_Source_properties_typeProperties_username": {
 			"type": "string",
@@ -23,7 +23,7 @@
 			"type": "string",
 			"defaultValue": "https://raw.githubusercontent.com/"
 		},
-		"LS_AzureDataLakeStorage_properties_typeProperties_url": {
+		"LS_AzureDLS_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://samiketstorageaccount.dfs.core.windows.net/"
 		},
@@ -57,8 +57,8 @@
 					"GitHub_Source_credential": {
 						"value": "[parameters('GitHub_Source_credential')]"
 					},
-					"LS_AzureDataLakeStorage_accountKey": {
-						"value": "[parameters('LS_AzureDataLakeStorage_accountKey')]"
+					"LS_AzureDLS_accountKey": {
+						"value": "[parameters('LS_AzureDLS_accountKey')]"
 					},
 					"GitHub_Source_properties_typeProperties_username": {
 						"value": "[parameters('GitHub_Source_properties_typeProperties_username')]"
@@ -66,8 +66,8 @@
 					"LS_Github_properties_typeProperties_url": {
 						"value": "[parameters('LS_Github_properties_typeProperties_url')]"
 					},
-					"LS_AzureDataLakeStorage_properties_typeProperties_url": {
-						"value": "[parameters('LS_AzureDataLakeStorage_properties_typeProperties_url')]"
+					"LS_AzureDLS_properties_typeProperties_url": {
+						"value": "[parameters('LS_AzureDLS_properties_typeProperties_url')]"
 					}
 				}
 			},

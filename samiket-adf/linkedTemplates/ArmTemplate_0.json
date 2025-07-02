@@ -11,9 +11,9 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'credential' of 'GitHub_Source'"
 		},
-		"LS_AzureDataLakeStorage_accountKey": {
+		"LS_AzureDLS_accountKey": {
 			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'LS_AzureDataLakeStorage'"
+			"metadata": "Secure string for 'accountKey' of 'LS_AzureDLS'"
 		},
 		"GitHub_Source_properties_typeProperties_username": {
 			"type": "string",
@@ -23,7 +23,7 @@
 			"type": "string",
 			"defaultValue": "https://raw.githubusercontent.com/"
 		},
-		"LS_AzureDataLakeStorage_properties_typeProperties_url": {
+		"LS_AzureDLS_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://samiketstorageaccount.dfs.core.windows.net/"
 		}
@@ -66,21 +66,48 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/LS_AzureDataLakeStorage')]",
+			"name": "[concat(parameters('factoryName'), '/LS_AzureDLS')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
 				"type": "AzureBlobFS",
 				"typeProperties": {
-					"url": "[parameters('LS_AzureDataLakeStorage_properties_typeProperties_url')]",
+					"url": "[parameters('LS_AzureDLS_properties_typeProperties_url')]",
 					"accountKey": {
 						"type": "SecureString",
-						"value": "[parameters('LS_AzureDataLakeStorage_accountKey')]"
+						"value": "[parameters('LS_AzureDLS_accountKey')]"
 					}
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Azure_CSV_File')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_AzureDLS",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileSystem": "samiket-source"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_AzureDLS')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Git_CSV_File')]",
@@ -110,20 +137,28 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DelimitedText1')]",
+			"name": "[concat(parameters('factoryName'), '/SourceCSVFile')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "LS_AzureDataLakeStorage",
+					"referenceName": "LS_AzureDLS",
 					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"p_file_name": {
+						"type": "string"
+					}
 				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"folderPath": "FromGIT",
+						"fileName": {
+							"value": "@dataset().p_file_name",
+							"type": "Expression"
+						},
 						"fileSystem": "samiket-source"
 					},
 					"columnDelimiter": ",",
@@ -134,7 +169,200 @@
 				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_AzureDataLakeStorage')]"
+				"[concat(variables('factoryId'), '/linkedServices/LS_AzureDLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DestCSVFile')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_AzureDLS",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"p_file_name": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().p_file_name",
+							"type": "Expression"
+						},
+						"folderPath": "csvfiles",
+						"fileSystem": "samiket-destination"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_AzureDLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline_copy_file_to_dest_conditionally')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "pipeline_copy_file_to_dest_conditionally",
+				"activities": [
+					{
+						"name": "Get_CSV_Metadata",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "Azure_CSV_File",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
+					},
+					{
+						"name": "ForEachCSV",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Get_CSV_Metadata",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get_CSV_Metadata').output.childItems",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "IfDetailFile",
+									"type": "IfCondition",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@startswith(item().name,'Detail')",
+											"type": "Expression"
+										},
+										"ifTrueActivities": [
+											{
+												"name": "CopyDetailsCSVFile",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "DelimitedTextSource",
+														"storeSettings": {
+															"type": "AzureBlobFSReadSettings",
+															"recursive": true,
+															"enablePartitionDiscovery": false
+														},
+														"formatSettings": {
+															"type": "DelimitedTextReadSettings"
+														}
+													},
+													"sink": {
+														"type": "DelimitedTextSink",
+														"storeSettings": {
+															"type": "AzureBlobFSWriteSettings"
+														},
+														"formatSettings": {
+															"type": "DelimitedTextWriteSettings",
+															"quoteAllText": true,
+															"fileExtension": ".txt"
+														}
+													},
+													"enableStaging": false,
+													"translator": {
+														"type": "TabularTranslator",
+														"typeConversion": true,
+														"typeConversionSettings": {
+															"allowDataTruncation": true,
+															"treatBooleanAsNumber": false
+														}
+													}
+												},
+												"inputs": [
+													{
+														"referenceName": "SourceCSVFile",
+														"type": "DatasetReference",
+														"parameters": {
+															"p_file_name": {
+																"value": "@item().name",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "DestCSVFile",
+														"type": "DatasetReference",
+														"parameters": {
+															"p_file_name": {
+																"value": "@item().name",
+																"type": "Expression"
+															}
+														}
+													}
+												]
+											}
+										]
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Azure_CSV_File')]",
+				"[concat(variables('factoryId'), '/datasets/SourceCSVFile')]",
+				"[concat(variables('factoryId'), '/datasets/DestCSVFile')]"
 			]
 		},
 		{
@@ -198,7 +426,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "DelimitedText1",
+								"referenceName": "Azure_CSV_File",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -212,7 +440,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/Git_CSV_File')]",
-				"[concat(variables('factoryId'), '/datasets/DelimitedText1')]"
+				"[concat(variables('factoryId'), '/datasets/Azure_CSV_File')]"
 			]
 		}
 	]

@@ -8,7 +8,7 @@
 		"GitHub_Source_credential": {
 			"value": ""
 		},
-		"LS_AzureDataLakeStorage_accountKey": {
+		"LS_AzureDLS_accountKey": {
 			"value": ""
 		},
 		"GitHub_Source_properties_typeProperties_username": {
@@ -17,7 +17,7 @@
 		"LS_Github_properties_typeProperties_url": {
 			"value": "https://raw.githubusercontent.com/"
 		},
-		"LS_AzureDataLakeStorage_properties_typeProperties_url": {
+		"LS_AzureDLS_properties_typeProperties_url": {
 			"value": "https://samiketstorageaccount.dfs.core.windows.net/"
 		}
 	}
