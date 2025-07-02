@@ -111,13 +111,25 @@
 										"inputs": [
 											{
 												"referenceName": "SourceCSVFile",
-												"type": "DatasetReference"
+												"type": "DatasetReference",
+												"parameters": {
+													"p_file_name": {
+														"value": "@item().name",
+														"type": "Expression"
+													}
+												}
 											}
 										],
 										"outputs": [
 											{
 												"referenceName": "DestCSVFile",
-												"type": "DatasetReference"
+												"type": "DatasetReference",
+												"parameters": {
+													"p_file_name": {
+														"value": "@item().name",
+														"type": "Expression"
+													}
+												}
 											}
 										]
 									}
