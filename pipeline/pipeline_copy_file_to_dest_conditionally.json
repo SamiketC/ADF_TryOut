@@ -110,13 +110,13 @@
 										},
 										"inputs": [
 											{
-												"referenceName": "Azure_CSV_File",
+												"referenceName": "SourceCSVFile",
 												"type": "DatasetReference"
 											}
 										],
 										"outputs": [
 											{
-												"referenceName": "Azure_CSV_File",
+												"referenceName": "DestCSVFile",
 												"type": "DatasetReference"
 											}
 										]
