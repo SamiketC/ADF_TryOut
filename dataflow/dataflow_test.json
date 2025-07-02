@@ -13,11 +13,23 @@
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "FilterActives"
+				}
+			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          EmpId as short,",
+				"          Name as string,",
+				"          Designation as string,",
+				"          Salary as integer,",
+				"          IsActive as boolean",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> SourceCSVFile"
+				"     ignoreNoFilesFound: false) ~> SourceCSVFile",
+				"SourceCSVFile filter(ERROR_FUNCTION('')) ~> FilterActives"
 			]
 		}
 	}
