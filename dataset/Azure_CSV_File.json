@@ -2,7 +2,7 @@
 	"name": "Azure_CSV_File",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "LS_AzureDataLakeStorage",
+			"referenceName": "LS_AzureDLS",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
