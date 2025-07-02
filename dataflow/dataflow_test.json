@@ -42,8 +42,7 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectList",
 				"SelectList aggregate(groupBy(IsActive),",
-				"     IsActive = ERROR_FUNCTION(''),",
-				"          CountRecords = count(EmpId)) ~> aggregateOnIsActive"
+				"     CountRecords = count(EmpId)) ~> aggregateOnIsActive"
 			]
 		}
 	}
