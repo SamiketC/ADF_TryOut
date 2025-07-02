@@ -15,7 +15,10 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "Details_Employee.csv",
+				"fileName": {
+					"value": "@dataset().p_file_name",
+					"type": "Expression"
+				},
 				"fileSystem": "samiket-source"
 			},
 			"columnDelimiter": ",",
