@@ -10,6 +10,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "SourceCSVFile"
+				},
+				{
+					"dataset": {
+						"referenceName": "SourceCSVFile",
+						"type": "DatasetReference"
+					},
+					"name": "SourceCSVSecondCopy"
 				}
 			],
 			"sinks": [],
@@ -21,7 +28,10 @@
 					"name": "aggregateOnIsActive"
 				},
 				{
-					"name": "SelectAllColumns"
+					"name": "selectAllRecords"
+				},
+				{
+					"name": "PerformJoin"
 				}
 			],
 			"scriptLines": [
@@ -35,7 +45,17 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> SourceCSVFile",
-				"SelectAllColumns select(mapColumn(",
+				"source(output(",
+				"          EmpId as short,",
+				"          Name as string,",
+				"          Designation as string,",
+				"          Salary as integer,",
+				"          IsActive as boolean",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SourceCSVSecondCopy",
+				"SourceCSVFile select(mapColumn(",
 				"          EmpId,",
 				"          Name,",
 				"          Designation,",
@@ -46,15 +66,13 @@
 				"     skipDuplicateMapOutputs: true) ~> SelectList",
 				"SelectList aggregate(groupBy(IsActive),",
 				"     CountRecords = count(EmpId)) ~> aggregateOnIsActive",
-				"SourceCSVFile select(mapColumn(",
-				"          EmpId,",
-				"          Name,",
-				"          Designation,",
-				"          Salary,",
-				"          IsActive",
-				"     ),",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SelectAllColumns"
+				"SourceCSVSecondCopy select(skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectAllRecords",
+				"selectAllRecords, aggregateOnIsActive join(selectAllRecords@IsActive == aggregateOnIsActive@IsActive,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> PerformJoin"
 			]
 		}
 	}
