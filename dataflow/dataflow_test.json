@@ -10,13 +10,6 @@
 						"type": "DatasetReference"
 					},
 					"name": "SourceCSVFile"
-				},
-				{
-					"dataset": {
-						"referenceName": "SourceCSVFile",
-						"type": "DatasetReference"
-					},
-					"name": "SourceCSVSecondCopy"
 				}
 			],
 			"sinks": [],
@@ -45,16 +38,6 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> SourceCSVFile",
-				"source(output(",
-				"          EmpId as short,",
-				"          Name as string,",
-				"          Designation as string,",
-				"          Salary as integer,",
-				"          IsActive as boolean",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> SourceCSVSecondCopy",
 				"SourceCSVFile select(mapColumn(",
 				"          EmpId,",
 				"          Name,",
@@ -66,7 +49,7 @@
 				"     skipDuplicateMapOutputs: true) ~> SelectList",
 				"SelectList aggregate(groupBy(IsActive),",
 				"     CountRecords = count(EmpId)) ~> aggregateOnIsActive",
-				"SourceCSVSecondCopy select(skipDuplicateMapInputs: true,",
+				"SourceCSVFile select(skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> selectAllRecords",
 				"selectAllRecords, aggregateOnIsActive join(selectAllRecords@IsActive == aggregateOnIsActive@IsActive,",
 				"     joinType:'inner',",
