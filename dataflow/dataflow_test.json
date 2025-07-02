@@ -16,6 +16,9 @@
 			"transformations": [
 				{
 					"name": "SelectList"
+				},
+				{
+					"name": "aggregateOnIsActive"
 				}
 			],
 			"scriptLines": [
@@ -37,7 +40,8 @@
 				"          IsActive",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SelectList"
+				"     skipDuplicateMapOutputs: true) ~> SelectList",
+				"SelectList aggregate(groupBy(IsActive)) ~> aggregateOnIsActive"
 			]
 		}
 	}
