@@ -15,7 +15,7 @@
 			"sinks": [],
 			"transformations": [
 				{
-					"name": "FilterActives"
+					"name": "SelectList"
 				}
 			],
 			"scriptLines": [
@@ -29,7 +29,15 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> SourceCSVFile",
-				"SourceCSVFile filter(ERROR_FUNCTION('')) ~> FilterActives"
+				"SourceCSVFile select(mapColumn(",
+				"          EmpId,",
+				"          Name,",
+				"          Designation,",
+				"          Salary,",
+				"          IsActive",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectList"
 			]
 		}
 	}
